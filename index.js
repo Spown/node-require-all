@@ -1,4 +1,6 @@
-var fs = require('fs');
+var fs = require('fs'),
+    path = require('path')
+;
 
 var DEFAULT_EXCLUDE_DIR = /^\./;
 var DEFAULT_FILTER = /^([^\.].*)\.js(on)?$/;
@@ -21,7 +23,7 @@ module.exports = function requireAll(options) {
   var files = fs.readdirSync(dirname);
 
   files.forEach(function (file) {
-    var filepath = dirname + '/' + file;
+    var filepath = path.join(dirname, file);
     if (fs.statSync(filepath).isDirectory()) {
 
       if (excludeDirectory(file)) return;
