@@ -1,5 +1,6 @@
 var fs = require('fs'),
-    path = require('path')
+    path = require('path'),
+    check = require('syntax-error')
 ;
 
 var DEFAULT_EXCLUDE_DIR = /^\./;
@@ -37,10 +38,15 @@ module.exports = function requireAll(options) {
       });
 
     } else {
-      var match = file.match(filter);
+      var match = file.match(filter),
+          parseErr
+      ;
       if (!match) return;
-
-      modules[map(match[1], filepath)] = resolve(require(filepath));
+      if ( parseErr = check(fs.readFileSync(filepath), filepath) ) {
+          throw Error.captureStackTrace({'message': parseErr})
+      } else {
+          modules[map(match[1], filepath)] = resolve(require(filepath));
+      }
     }
   });
 
